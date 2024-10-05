@@ -38,16 +38,8 @@ router.get("/obtener-clientes", (req, res) => {
 });
 // Ruta para crear un nuevo cliente
 router.post("/agregar-cliente", (req, res) => {
-  const {
-    nombre,
-    apellido,
-    email,
-    telefono,
-    direccion,
-    ciudad,
-    pais,
-    tipo,
-  } = req.body;
+  const { nombre, apellido, email, telefono, direccion, ciudad, pais, tipo } =
+    req.body;
 
   const sql = `
     INSERT INTO clientes (
@@ -82,10 +74,9 @@ router.post("/agregar-cliente", (req, res) => {
   });
 });
 
-
 // Ruta para obtener todos los productos
-router.get('/productos', (req, res) => {
-  const sql = 'SELECT * FROM productos';
+router.get("/productos", (req, res) => {
+  const sql = "SELECT * FROM productos";
   db.all(sql, [], (err, rows) => {
     if (err) {
       res.status(500).json({ error: err.message });
@@ -96,17 +87,9 @@ router.get('/productos', (req, res) => {
 });
 
 // Ruta para crear un nuevo producto
-router.post('/productos', (req, res) => {
-  const {
-    nombre,
-    descripcion,
-    costo,
-    precio,
-    categoria,
-    talla,
-    color,
-    stock
-  } = req.body;
+router.post("/productos", (req, res) => {
+  const { nombre, descripcion, costo, precio, categoria, talla, color, stock } =
+    req.body;
 
   const sql = `
     INSERT INTO productos (
@@ -129,7 +112,7 @@ router.post('/productos', (req, res) => {
     categoria,
     talla,
     color,
-    stock
+    stock,
   ];
 
   db.run(sql, params, function (err) {
@@ -142,17 +125,9 @@ router.post('/productos', (req, res) => {
 });
 
 // Ruta para actualizar un producto
-router.put('/productos/:id', (req, res) => {
-  const {
-    nombre,
-    descripcion,
-    costo,
-    precio,
-    categoria,
-    talla,
-    color,
-    stock
-  } = req.body;
+router.put("/productos/:id", (req, res) => {
+  const { nombre, descripcion, costo, precio, categoria, talla, color, stock } =
+    req.body;
   const { id } = req.params;
 
   const sql = `
@@ -177,7 +152,7 @@ router.put('/productos/:id', (req, res) => {
     talla,
     color,
     stock,
-    id
+    id,
   ];
 
   db.run(sql, params, function (err) {
@@ -190,9 +165,9 @@ router.put('/productos/:id', (req, res) => {
 });
 
 // Ruta para eliminar un producto
-router.delete('/productos/:id', (req, res) => {
+router.delete("/productos/:id", (req, res) => {
   const { id } = req.params;
-  const sql = 'DELETE FROM productos WHERE id = ?';
+  const sql = "DELETE FROM productos WHERE id = ?";
 
   db.run(sql, id, function (err) {
     if (err) {
@@ -202,9 +177,51 @@ router.delete('/productos/:id', (req, res) => {
     res.json({ changes: this.changes });
   });
 });
-  
-module.exports = router;
 
+// Ruta para obtener todos los pedidos
+router.get("/pedidos", (req, res) => {
+  const sql = "SELECT * FROM pedidos";
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ data: rows });
+  });
+});
 
+// Ruta para crear un nuevo pedido
+router.post("/pedidos", (req, res) => {
+  const { cliente_id } = req.body;
+  const sql = `
+    INSERT INTO pedidos (cliente_id)
+    VALUES (?)
+  `;
+  const params = [cliente_id];
+  db.run(sql, params, function (err) {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ id: this.lastID });
+  });
+});
+
+// Ruta para agregar un producto a un pedido
+router.post("/pedido_productos", (req, res) => {
+  const { pedido_id, producto_id, cantidad, precio } = req.body;
+  const sql = `
+    INSERT INTO pedido_productos (pedido_id, producto_id, cantidad, precio)
+    VALUES (?, ?, ?, ?)
+  `;
+  const params = [pedido_id, producto_id, cantidad, precio];
+  db.run(sql, params, function (err) {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ id: this.lastID });
+  });
+});
 
 module.exports = router;

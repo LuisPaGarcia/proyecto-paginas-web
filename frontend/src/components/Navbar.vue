@@ -8,6 +8,9 @@
       <span class="nav-item">
         <router-link class="nav-link" to="/clientes">Clientes</router-link>
       </span>
+      <span class="nav-item">
+        <router-link class="nav-link" to="/pedidos">Pedidos</router-link>
+      </span>
     </div>
   </div>
 </template>
