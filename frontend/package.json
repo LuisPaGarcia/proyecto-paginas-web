@@ -1,0 +1,21 @@
+{
+  "name": "proyecto-paginas-web-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "axios": "latest",
+    "bootstrap": "^5.3.3",
+    "bootstrap-vue-next": "^0.24.23",
+    "vue": "latest",
+    "vue-router": "^4.4.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "latest",
+    "unplugin-vue-components": "^0.27.4",
+    "vite": "latest"
+  }
+}
