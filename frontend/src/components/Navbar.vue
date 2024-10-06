@@ -1,6 +1,6 @@
 <template>
   <div class="navbar">
-    <router-link class="navbar-brand" to="/">Navbar</router-link>
+    <router-link class="navbar-brand" to="/">Variedades Chiquis, S.A.</router-link>
     <div class="navbar-nav">
       <span class="nav-item">
         <router-link class="nav-link" to="/productos">Productos</router-link>
@@ -9,7 +9,7 @@
         <router-link class="nav-link" to="/clientes">Clientes</router-link>
       </span>
       <span class="nav-item">
-        <router-link class="nav-link" to="/pedidos">Pedidos</router-link>
+        <router-link class="nav-link" to="/pedido">Realizar Pedido</router-link>
       </span>
     </div>
   </div>
