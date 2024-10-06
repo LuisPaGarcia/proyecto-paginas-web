@@ -11,6 +11,9 @@
       <span class="nav-item">
         <router-link class="nav-link" to="/pedido">Realizar Pedido</router-link>
       </span>
+      <span class="nav-item">
+        <router-link class="nav-link" to="/pedidos">Ver Pedidos</router-link>
+      </span>
     </div>
   </div>
 </template>

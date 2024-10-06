@@ -161,6 +161,19 @@ export default {
             cantidad: producto.cantidad,
             precio: producto.precio
           });
+
+           // Actualizar el stock del producto
+          const nuevoStock = producto.stock - producto.cantidad;
+          await axios.put(`/api/productos/${producto.id}`, {
+            nombre: producto.nombre,
+            descripcion: producto.descripcion,
+            costo: producto.costo,
+            precio: producto.precio,
+            categoria: producto.categoria,
+            talla: producto.talla,
+            color: producto.color,
+            stock: nuevoStock
+          });
         }
 
         // Limpiar el pedido y mostrar un mensaje de éxito

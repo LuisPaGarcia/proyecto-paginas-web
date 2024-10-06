@@ -3,6 +3,7 @@ import Inicio from '../components/Inicio.vue';
 import Clientes from '../Clientes.vue';
 import Productos from '../Productos.vue';
 import RealizarPedido from '../Realizar-Pedido.vue';
+import VerPedidos from '../Ver-Pedidos.vue';
 const routes = [
   {
     path: '/',
@@ -23,6 +24,11 @@ const routes = [
     path: '/pedido',
     name: 'Realizar Pedido',
     component: RealizarPedido
+  },
+  {
+    path: '/pedidos',
+    name: 'Ver Pedidos',
+    component: VerPedidos
   },
 ];
 
