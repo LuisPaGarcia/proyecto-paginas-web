@@ -14,7 +14,8 @@
 
     <div class="form-group">
       <label for="buscarProducto">Buscar Producto</label>
-      <input type="text" id="buscarProducto" v-model="buscarProducto" placeholder="Buscar por nombre, descripción o tipo" @input="buscarProductos" />
+      <input type="text" id="buscarProducto" v-model="buscarProducto"
+        placeholder="Buscar por nombre, descripción o tipo" @input="buscarProductos" />
     </div>
 
     <table>
@@ -41,7 +42,7 @@
           <td>{{ producto.talla }}</td>
           <td>{{ producto.color }}</td>
           <td>{{ producto.stock }}</td>
-            <td><button @click="agregarAlPedido(producto)" :disabled="producto.stock <= 0">Agregar al pedido</button></td>
+          <td><button @click="agregarAlPedido(producto)" :disabled="producto.stock <= 0">Agregar al pedido</button></td>
         </tr>
       </tbody>
     </table>
@@ -73,14 +74,21 @@
           <td>{{ producto.color }}</td>
           <td>{{ producto.stock }}</td>
           <td>
-            <input type="number" v-model.number="producto.cantidad" :min="1" :max="producto.stock" @input="validarCantidad(producto)" />
+            <input type="number" v-model.number="producto.cantidad" :min="1" :max="producto.stock"
+              @input="validarCantidad(producto)" />
           </td>
           <td><button @click="removerDelPedido(producto)">Remover</button></td>
+        </tr>
+        <tr>
+          <td colspan="8" style="text-align: right; font-weight: bold;">Total</td>
+          <td colspan="2">{{ totalPedido }}</td>
         </tr>
       </tbody>
     </table>
 
-    <button class="btn-confirmar-pedido" @click="confirmarPedido" :disabled="!pedido.length || !selectedCliente || pedido.some(producto => !producto.cantidad)" >Confirmar Pedido</button>
+    <button class="btn-confirmar-pedido" @click="confirmarPedido"
+      :disabled="!pedido.length || !selectedCliente || pedido.some(producto => !producto.cantidad)">Confirmar
+      Pedido</button>
   </div>
 </template>
 <script>
@@ -94,7 +102,8 @@ export default {
       buscarProducto: '',
       productos: [],
       productosFiltrados: [],
-      pedido: []
+      pedido: [],
+      totalPedido: 0,
     };
   },
   methods: {
@@ -115,6 +124,9 @@ export default {
         console.error('Error al obtener productos:', error);
       }
     },
+    actualizarTotalPedido() {
+      this.totalPedido = this.pedido.reduce((total, producto) => total + (producto.precio * producto.cantidad), 0);
+    },
     buscarProductos() {
       const term = this.buscarProducto.toLowerCase();
       this.productosFiltrados = this.productos.filter(producto =>
@@ -127,14 +139,16 @@ export default {
       this.pedido.push({ ...producto, cantidad: 1 });
       this.productos = this.productos.filter(p => p.id !== producto.id);
       this.buscarProductos();
+      this.actualizarTotalPedido();
     },
     removerDelPedido(producto) {
       this.productos.push(producto);
       this.pedido = this.pedido.filter(p => p.id !== producto.id);
       this.buscarProductos();
+      this.actualizarTotalPedido();
     },
     validarCantidad(producto) {
-      if (producto.cantidad === ''){
+      if (producto.cantidad === '') {
         producto.cantidad = '';
         return
       }
@@ -144,6 +158,7 @@ export default {
       } else if (producto.cantidad > producto.stock) {
         producto.cantidad = producto.stock;
       }
+      this.actualizarTotalPedido();
     },
     async confirmarPedido() {
       try {
@@ -162,7 +177,7 @@ export default {
             precio: producto.precio
           });
 
-           // Actualizar el stock del producto
+          // Actualizar el stock del producto
           const nuevoStock = producto.stock - producto.cantidad;
           await axios.put(`/api/productos/${producto.id}`, {
             nombre: producto.nombre,

@@ -242,6 +242,22 @@ router.get('/ver-pedidos', (req, res) => {
   });
 });
 
-module.exports = router;
+// Ruta para obtener los detalles de un pedido específico
+router.get('/pedidos/:id', (req, res) => {
+  const { id } = req.params;
+  const sql = `
+    SELECT pp.producto_id, p.nombre, p.descripcion, p.precio, p.categoria, p.talla, p.color, p.stock, pp.cantidad
+    FROM pedido_productos pp
+    JOIN productos p ON pp.producto_id = p.id
+    WHERE pp.pedido_id = ?
+  `;
+  db.all(sql, [id], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ data: rows });
+  });
+});
 
 module.exports = router;
