@@ -9,6 +9,7 @@
           <th>Total del Pedido</th>
           <th>Total de Productos</th>
           <th>Total Cantidad</th>
+          <th>Estado</th>
         </tr>
       </thead>
       <tbody>
@@ -18,6 +19,7 @@
           <td>{{ pedido.total | currency }}</td>
           <td>{{ pedido.total_productos }}</td>
           <td>{{ pedido.total_cantidad }}</td>
+          <td>{{ pedido.estado_pedido }}</td>
         </tr>
       </tbody>
     </table>

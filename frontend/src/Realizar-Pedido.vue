@@ -164,7 +164,8 @@ export default {
       try {
         // Crear un nuevo pedido
         const pedidoResponse = await axios.post('/api/pedidos', {
-          cliente_id: this.selectedCliente
+          cliente_id: this.selectedCliente,
+          estado_pedido: 'pendiente',
         });
         const pedidoId = pedidoResponse.data.id;
 

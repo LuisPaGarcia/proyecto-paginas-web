@@ -192,12 +192,12 @@ router.get("/pedidos", (req, res) => {
 
 // Ruta para crear un nuevo pedido
 router.post("/pedidos", (req, res) => {
-  const { cliente_id } = req.body;
+  const { cliente_id, estado_pedido } = req.body;
   const sql = `
-    INSERT INTO pedidos (cliente_id)
-    VALUES (?)
+    INSERT INTO pedidos (cliente_id, estado_pedido)
+    VALUES (?, ?)
   `;
-  const params = [cliente_id];
+  const params = [cliente_id, estado_pedido];
   db.run(sql, params, function (err) {
     if (err) {
       res.status(500).json({ error: err.message });
@@ -227,7 +227,7 @@ router.post("/pedido_productos", (req, res) => {
 // Ruta para obtener todos los pedidos con detalles
 router.get('/ver-pedidos', (req, res) => {
   const sql = `
-    SELECT p.id, p.cliente_id, c.nombre, c.apellido, COUNT(pp.producto_id) AS total_productos, SUM(pp.cantidad * pp.precio) AS total, SUM(pp.cantidad) AS total_cantidad
+    SELECT p.id, p.cliente_id, c.nombre, c.apellido, COUNT(pp.producto_id) AS total_productos, SUM(pp.cantidad * pp.precio) AS total, SUM(pp.cantidad) AS total_cantidad, p.estado_pedido
     FROM pedidos p
     JOIN clientes c ON p.cliente_id = c.id
     JOIN pedido_productos pp ON p.id = pp.pedido_id
