@@ -1,4 +1,5 @@
 <template>
+  <Navbar />
   <div class="container">
     <h1>Clientes</h1>
     <table>
@@ -14,6 +15,7 @@
           <th>País</th>
           <th>Fecha de Registro</th>
           <th>Tipo</th>
+          <th>Link</th>
         </tr>
       </thead>
       <tbody>
@@ -28,6 +30,9 @@
           <td>{{ cliente.pais }}</td>
           <td>{{ cliente.fecha_registro }}</td>
           <td>{{ cliente.tipo }}</td>
+            <td>
+              <button @click="copiarUrl(cliente.id)">Copiar Link</button>
+            </td>
         </tr>
       </tbody>
     </table>
@@ -121,8 +126,13 @@ button:hover {
 
 <script>
 import axios from 'axios';
+import Productos from './Productos.vue';
+
 export default {
   name: 'Clientes',
+  components: {
+    'Productos': Productos
+  },
   data() {
     return {
       clientes: [],
@@ -140,6 +150,10 @@ export default {
     this.fetchClientes();
   },
   methods: {
+    copiarUrl(clienteId) {
+      const url = `${window.location.origin}/vista-cliente?cliente_id=${clienteId}`;
+      navigator.clipboard.writeText(url);
+    },
     async fetchClientes() {
       const response = await axios.get('/api/obtener-clientes');
       this.clientes = response.data.data;

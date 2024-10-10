@@ -1,4 +1,5 @@
 <template>
+  <Navbar />
   <div class="container">
     <h1>Listado de Pedidos</h1>
     <table>

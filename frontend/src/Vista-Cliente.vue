@@ -1,18 +1,20 @@
 <template>
-  <Navbar />
   <div class="container">
-    <h1>Realizar Pedido</h1>
+    <h1>Vista Cliente - Variedades Chiquis, S.A.</h1>
 
     <div class="form-group">
       <label for="cliente">Seleccionar Cliente</label>
-      <select v-model="selectedCliente" id="cliente" required>
+      <p v-if="clienteUrlValido">El cliente debería estar oculto</p>
+      <p v-else>El cliente no es válido.</p>
+
+      <select v-model="clienteSeleccionado" id="cliente" required>
         <option disabled value="">Selecciona un Cliente</option>
         <option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
           {{ cliente.nombre }} {{ cliente.apellido }}
         </option>
       </select>
     </div>
-
+    <h2>Realizar un pedido</h2>
     <div class="form-group">
       <label for="buscarProducto">Buscar Producto</label>
       <input type="text" id="buscarProducto" v-model="buscarProducto"
@@ -88,8 +90,12 @@
     </table>
 
     <button class="btn-confirmar-pedido" @click="confirmarPedido"
-      :disabled="!pedido.length || !selectedCliente || pedido.some(producto => !producto.cantidad)">Confirmar
+      :disabled="!pedido.length || !clienteSeleccionado || pedido.some(producto => !producto.cantidad)">Confirmar
       Pedido</button>
+  </div>
+  <div class="container">
+    <h2>Ver mis pedidos</h2>
+    wip
   </div>
 </template>
 <script>
@@ -99,12 +105,13 @@ export default {
   data() {
     return {
       clientes: [],
-      selectedCliente: '',
+      clienteSeleccionado: '',
       buscarProducto: '',
       productos: [],
       productosFiltrados: [],
       pedido: [],
       totalPedido: 0,
+      clienteUrlValido: false,
     };
   },
   methods: {
@@ -112,6 +119,7 @@ export default {
       try {
         const response = await axios.get('/api/obtener-clientes');
         this.clientes = response.data.data;
+        this.clienteUrlValido = this.clientes.some(cliente => cliente.id.toString() === this.clienteSeleccionado);
       } catch (error) {
         console.error('Error al obtener clientes:', error);
       }
@@ -165,7 +173,7 @@ export default {
       try {
         // Crear un nuevo pedido
         const pedidoResponse = await axios.post('/api/pedidos', {
-          cliente_id: this.selectedCliente,
+          cliente_id: this.clienteSeleccionado,
           estado_pedido: 'pendiente',
         });
         const pedidoId = pedidoResponse.data.id;
@@ -195,7 +203,7 @@ export default {
 
         // Limpiar el pedido y mostrar un mensaje de éxito
         this.pedido = [];
-        this.selectedCliente = '';
+        this.clienteSeleccionado = '';
         alert('Pedido confirmado con éxito');
       } catch (error) {
         console.error('Error al confirmar el pedido:', error);
@@ -203,14 +211,27 @@ export default {
       }
       this.fetchClientes();
       this.fetchProductos();
+    },
+    async obtenerParametroUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const clienteId = urlParams.get('cliente_id');
+      if (clienteId) {
+        this.clienteSeleccionado = clienteId;
+      }
     }
   },
   mounted() {
     this.fetchClientes();
     this.fetchProductos();
+    this.obtenerParametroUrl();
   }
 };
 </script>
+<style>
+body {
+  background: #8c8c8c;
+}
+</style>
 
 <style scoped>
 .container {

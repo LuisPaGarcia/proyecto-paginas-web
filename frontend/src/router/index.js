@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Inicio from '../components/Inicio.vue';
-import Clientes from '../Clientes.vue';
 import Productos from '../Productos.vue';
+import Clientes from '../Clientes.vue';
 import RealizarPedido from '../Realizar-Pedido.vue';
+import VistaCliente from '../Vista-Cliente.vue';
 import VerPedidos from '../Ver-Pedidos.vue';
+
 const routes = [
   {
     path: '/',
@@ -24,6 +26,11 @@ const routes = [
     path: '/pedido',
     name: 'Realizar Pedido',
     component: RealizarPedido
+  },
+  {
+    path: '/vista-cliente',
+    name: 'Vista Cliente',
+    component: VistaCliente
   },
   {
     path: '/pedidos',

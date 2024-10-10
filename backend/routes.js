@@ -74,6 +74,34 @@ router.post("/agregar-cliente", (req, res) => {
   });
 });
 
+// Ruta para actualizar un cliente
+router.put('/clientes/:id', (req, res) => {
+  const { nombre, email, telefono, direccion, ciudad, pais, tipo } = req.body;
+  const { id } = req.params;
+
+  const sql = `
+    UPDATE clientes SET
+      nombre = ?, 
+      email = ?, 
+      telefono = ?, 
+      direccion = ?, 
+      ciudad = ?, 
+      pais = ?, 
+      tipo = ?
+    WHERE id = ?
+  `;
+
+  const params = [nombre, email, telefono, direccion, ciudad, pais, tipo, id];
+
+  db.run(sql, params, function (err) {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ changes: this.changes });
+  });
+});
+
 // Ruta para obtener todos los productos
 router.get("/productos", (req, res) => {
   const sql = "SELECT * FROM productos";

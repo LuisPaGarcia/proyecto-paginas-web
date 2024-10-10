@@ -1,4 +1,5 @@
 <template>
+  <Navbar />
   <div class="container">
     <h1>Productos</h1>
     <table>
@@ -49,11 +50,13 @@
       <button type="submit">Agregar Producto</button>
     </form>
   </div>
+  <Clientes />
 </template>
 <script>
 import axios from 'axios';
 
 export default {
+  name: 'Productos',
   data() {
     return {
       productos: [],
