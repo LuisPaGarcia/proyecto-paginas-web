@@ -3,21 +3,23 @@
     <h1>Vista Cliente - Variedades Chiquis, S.A.</h1>
 
     <div class="form-group">
-      <label for="cliente">Seleccionar Cliente</label>
-      <p v-if="clienteUrlValido">El cliente debería estar oculto</p>
+      <p v-if="clienteUrlValido">El cliente es valido</p>
       <p v-else>El cliente no es válido.</p>
+      <div v-if="false">
+        <label for="cliente">Seleccionar Cliente</label>
 
-      <select v-model="clienteSeleccionado" id="cliente" required>
-        <option disabled value="">Selecciona un Cliente</option>
-        <option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
-          {{ cliente.nombre }} {{ cliente.apellido }}
-        </option>
-      </select>
+        <select v-model="clienteSeleccionado" id="cliente" required>
+          <option disabled value="">Selecciona un Cliente</option>
+          <option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
+            {{ cliente.nombre }} {{ cliente.apellido }}
+          </option>
+        </select>
+      </div>
     </div>
     <h2>Realizar un pedido</h2>
     <div class="form-group">
       <label for="buscarProducto">Buscar Producto</label>
-      <input type="text" id="buscarProducto" v-model="buscarProducto"
+      <input :disabled="clienteUrlValido===false" type="text" id="buscarProducto" v-model="buscarProducto"
         placeholder="Buscar por nombre, descripción o tipo" @input="buscarProductos" />
     </div>
 
@@ -45,7 +47,7 @@
           <td>{{ producto.talla }}</td>
           <td>{{ producto.color }}</td>
           <td>{{ producto.stock }}</td>
-          <td><button @click="agregarAlPedido(producto)" :disabled="producto.stock <= 0">Agregar al pedido</button></td>
+          <td><button @click="agregarAlPedido(producto)" :disabled="producto.stock <= 0 || clienteUrlValido===false ">Agregar al pedido</button></td>
         </tr>
       </tbody>
     </table>
