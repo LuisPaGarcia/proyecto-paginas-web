@@ -5,10 +5,9 @@
     <div class="form-group">
       <p v-if="clienteUrlValido">El cliente es valido</p>
       <p v-else>El cliente no es válido.</p>
-      <div v-if="false">
+      <div>
         <label for="cliente">Seleccionar Cliente</label>
-
-        <select v-model="clienteSeleccionado" id="cliente" required>
+        <select :disabled="clienteUrlValido" v-model="clienteSeleccionado" id="cliente" required>
           <option disabled value="">Selecciona un Cliente</option>
           <option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
             {{ cliente.nombre }} {{ cliente.apellido }}
@@ -96,8 +95,62 @@
       Pedido</button>
   </div>
   <div class="container">
-    <h2>Ver mis pedidos</h2>
-    wip
+    <h2 v-if="pedidos.length">Ver mis pedidos (Haz click para ver el detalle)</h2>
+    <!-- Si no hay pedidos mostrar un mensaje -->
+    <h3 v-if="!pedidos.length" class="aviso">+ No hay pedidos</h3>
+    <!-- Ocultar esta tabla si no hay pedidos -->
+    <table v-if="pedidos.length">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Total del Pedido</th>
+          <th>Total de Productos</th>
+          <th>Total Cantidad</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="pedido in pedidos" :key="pedido.id" @click="verDetallePedido(pedido.id)" :class="{ 'selected-row': selectedPedidoId === pedido.id }">
+          <td>{{ pedido.id }}</td>
+          <td>{{ pedido.nombre }} {{ pedido.apellido }}</td>
+          <td>{{ pedido.total | currency }}</td>
+          <td>{{ pedido.total_productos }}</td>
+          <td>{{ pedido.total_cantidad }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <hr>
+    <div class="tabla-pedidos">
+      <h2 v-if="detallePedido.length">Pedido #{{ selectedPedidoId }}</h2>
+      <table v-if="detallePedido.length">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Categoría</th>
+            <th>Talla</th>
+            <th>Color</th>
+            <th>Stock</th>
+            <th>Cantidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="producto in detallePedido" :key="producto.producto_id">
+            <td>{{ producto.producto_id }}</td>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.descripcion }}</td>
+            <td>{{ producto.precio }}</td>
+            <td>{{ producto.categoria }}</td>
+            <td>{{ producto.talla }}</td>
+            <td>{{ producto.color }}</td>
+            <td>{{ producto.stock }}</td>
+            <td>{{ producto.cantidad }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 <script>
@@ -114,6 +167,11 @@ export default {
       pedido: [],
       totalPedido: 0,
       clienteUrlValido: false,
+
+      // Pedidos
+      pedidos: [],
+      detallePedido: [],
+      selectedPedidoId: null
     };
   },
   methods: {
@@ -220,12 +278,32 @@ export default {
       if (clienteId) {
         this.clienteSeleccionado = clienteId;
       }
+    },
+
+    // Pedidos
+    async fetchPedidos() {
+      try {
+        const response = await axios.get(`/api/ver-pedidos/${this.clienteSeleccionado.trim()}`);
+        this.pedidos = response.data.data;
+      } catch (error) {
+        console.error('Error al obtener pedidos:', error);
+      }
+    },
+    async verDetallePedido(pedidoId) {
+      try {
+        const response = await axios.get(`/api/pedidos/${pedidoId}`);
+        this.detallePedido = response.data.data;
+        this.selectedPedidoId = pedidoId;
+      } catch (error) {
+        console.error('Error al obtener el detalle del pedido:', error);
+      }
     }
   },
   mounted() {
     this.fetchClientes();
     this.fetchProductos();
     this.obtenerParametroUrl();
+    this.fetchPedidos();
   }
 };
 </script>
@@ -292,5 +370,14 @@ button {
 
 button:hover {
   background-color: #ddd;
+}
+
+.aviso {
+  margin-top: 20px;
+  color: lightgray;
+}
+.tabla-pedidos {
+  margin-top: 2rem;
+  margin-bottom: 5rem;
 }
 </style>

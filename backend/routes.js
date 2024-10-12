@@ -270,6 +270,26 @@ router.get('/ver-pedidos', (req, res) => {
   });
 });
 
+// Ruta para obtener todos los pedidos con detalles basados en el ID del cliente
+router.get('/ver-pedidos/:cliente_id', (req, res) => {
+  const { cliente_id } = req.params;
+  const sql = `
+    SELECT p.id, p.cliente_id, c.nombre, c.apellido, COUNT(pp.producto_id) AS total_productos, SUM(pp.cantidad * pp.precio) AS total, SUM(pp.cantidad) AS total_cantidad, p.estado_pedido
+    FROM pedidos p
+    JOIN clientes c ON p.cliente_id = c.id
+    JOIN pedido_productos pp ON p.id = pp.pedido_id
+    WHERE p.cliente_id = ?
+    GROUP BY p.id, p.cliente_id, c.nombre, c.apellido
+  `;
+  db.all(sql, [cliente_id], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ data: rows });
+  });
+});
+
 // Ruta para obtener los detalles de un pedido específico
 router.get('/pedidos/:id', (req, res) => {
   const { id } = req.params;

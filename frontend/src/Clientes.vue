@@ -31,7 +31,7 @@
           <td>{{ cliente.fecha_registro }}</td>
           <td>{{ cliente.tipo }}</td>
             <td>
-              <button @click="copiarUrl(cliente.id)">Copiar Link</button>
+              <BotonCopiarLink :cliente="cliente" />
             </td>
         </tr>
       </tbody>
@@ -150,10 +150,6 @@ export default {
     this.fetchClientes();
   },
   methods: {
-    copiarUrl(clienteId) {
-      const url = `${window.location.origin}/vista-cliente?cliente_id=${clienteId}`;
-      navigator.clipboard.writeText(url);
-    },
     async fetchClientes() {
       const response = await axios.get('/api/obtener-clientes');
       this.clientes = response.data.data;
