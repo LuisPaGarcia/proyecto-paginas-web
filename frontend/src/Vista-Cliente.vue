@@ -148,6 +148,10 @@
             <td>{{ producto.stock }}</td>
             <td>{{ producto.cantidad }}</td>
           </tr>
+          <tr>
+          <td colspan="8" style="text-align: right; font-weight: bold;">Total</td>
+          <td colspan="2">{{ totalPedido }}</td>
+        </tr>
         </tbody>
       </table>
     </div>
@@ -194,7 +198,7 @@ export default {
       }
     },
     actualizarTotalPedido() {
-      this.totalPedido = this.pedido.reduce((total, producto) => total + (producto.precio * producto.cantidad), 0);
+      this.totalPedido = this.detallePedido.reduce((total, producto) => total + (producto.precio * producto.cantidad), 0);
     },
     buscarProductos() {
       const term = this.buscarProducto.toLowerCase();
@@ -264,6 +268,7 @@ export default {
         // Limpiar el pedido y mostrar un mensaje de éxito
         this.pedido = [];
         this.clienteSeleccionado = '';
+        this.fetchPedidos();
         alert('Pedido confirmado con éxito');
       } catch (error) {
         console.error('Error al confirmar el pedido:', error);
@@ -294,9 +299,12 @@ export default {
         const response = await axios.get(`/api/pedidos/${pedidoId}`);
         this.detallePedido = response.data.data;
         this.selectedPedidoId = pedidoId;
+        this.actualizarTotalPedido(); 
       } catch (error) {
         console.error('Error al obtener el detalle del pedido:', error);
       }
+
+      
     }
   },
   mounted() {
