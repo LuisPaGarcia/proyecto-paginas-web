@@ -244,6 +244,25 @@ router.post("/pedidos", (req, res) => {
   });
 });
 
+// Ruta para actualizar el estado de un pedido a "Completado"
+router.put('/pedidos/:id/completar', (req, res) => {
+  const { id } = req.params;
+
+  const sql = `
+    UPDATE pedidos
+    SET estado_pedido = 'Completado'
+    WHERE id = ?
+  `;
+
+  db.run(sql, [id], function (err) {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ changes: this.changes });
+  });
+});
+
 // Ruta para agregar un producto a un pedido
 router.post("/pedido_productos", (req, res) => {
   const { pedido_id, producto_id, cantidad, precio } = req.body;

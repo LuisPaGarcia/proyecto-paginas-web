@@ -28,7 +28,16 @@
     <!-- Mostrar el aviso si no hay pedido seleccionado aún -->
     <h2 v-if="!detallePedido.length" class="aviso">+ Haz click en un pedido para ver el detalle</h2>
     <!-- Mostrar el pedido si ya se seleccionó un pedido -->
-    <h2 v-if="detallePedido.length">Pedido</h2>
+    <div class="titulo-detalle-pedido">
+      <h2 v-if="detallePedido.length">Pedido</h2>
+      <button 
+        v-if="selectedPedidoId" 
+        @click="marcarPedidoComoCompletado(selectedPedidoId)" 
+        :disabled="pedidos.find(pedido => pedido.id === selectedPedidoId)?.estado_pedido === 'Completado'"
+      >
+        Marcar pedido como Completado
+      </button>
+    </div>
     <table v-if="detallePedido.length">
       <thead>
         <tr>
@@ -97,6 +106,16 @@ export default {
     actualizarTotalPedido() {
       this.totalPedido = this.detallePedido.reduce((total, producto) => total + (producto.precio * producto.cantidad), 0);
     },
+    async marcarPedidoComoCompletado(pedidoId) {
+      try {
+        await axios.put(`/api/pedidos/${pedidoId}/completar`);
+        this.fetchPedidos(); // Actualiza la lista de pedidos después de marcar como completado
+        alert('Pedido ha cambiado a COMPLETADO.');
+        verDetallePedido(pedidoId)
+      } catch (error) {
+        console.error('Error al marcar el pedido como completado:', error);
+      }
+    }
   },
   mounted() {
     this.fetchPedidos();
@@ -104,6 +123,12 @@ export default {
 };
 </script>
 <style scoped>
+
+.titulo-detalle-pedido {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .container {
   max-width: 1200px;
   margin: 0 auto;
