@@ -1,5 +1,5 @@
 <template>
-  <button @click="copiarUrl(cliente.id)">Copiar Link</button>
+  <button @click="copiarUrl(cliente.id_secreto)">Copiar Link</button>
 </template>
 
 <script>

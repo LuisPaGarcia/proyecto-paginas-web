@@ -165,6 +165,7 @@ export default {
     return {
       clientes: [],
       clienteSeleccionado: '',
+      idSecretoCliente: '',
       buscarProducto: '',
       productos: [],
       productosFiltrados: [],
@@ -183,7 +184,10 @@ export default {
       try {
         const response = await axios.get('/api/obtener-clientes');
         this.clientes = response.data.data;
-        this.clienteUrlValido = this.clientes.some(cliente => cliente.id.toString() === this.clienteSeleccionado);
+        // encontrar si el id secreto del cliente es valido
+        this.clienteUrlValido = this.clientes.some(cliente => cliente.id_secreto.toString() === this.idSecretoCliente);
+        // encontrar el id del cliente seleccionado usando el id secreto
+        this.clienteSeleccionado = this.clientes.find(cliente => cliente.id_secreto.toString() === this.idSecretoCliente)?.id || '';
       } catch (error) {
         console.error('Error al obtener clientes:', error);
       }
@@ -279,9 +283,9 @@ export default {
     },
     async obtenerParametroUrl() {
       const urlParams = new URLSearchParams(window.location.search);
-      const clienteId = urlParams.get('cliente_id');
-      if (clienteId) {
-        this.clienteSeleccionado = clienteId;
+      const cliente_id_secreto = urlParams.get('cliente_id');
+      if (cliente_id_secreto) {
+        this.idSecretoCliente = cliente_id_secreto;
       }
     },
 
@@ -308,9 +312,9 @@ export default {
     }
   },
   mounted() {
+    this.obtenerParametroUrl();
     this.fetchClientes();
     this.fetchProductos();
-    this.obtenerParametroUrl();
     this.fetchPedidos();
   }
 };

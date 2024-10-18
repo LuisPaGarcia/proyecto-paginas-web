@@ -1,6 +1,12 @@
 const express = require("express");
+const crypto = require('crypto'); // usado para generar el id secreto
 const db = require("./db");
 const router = express.Router();
+
+function generarIdSecreto() {
+  // genera un id secreto de 16 caracteres
+  return crypto.randomBytes(16).toString('hex'); // genera un id 
+}
 
 // Ruta para obtener todos los elementos
 router.get("/items", (req, res) => {
@@ -38,11 +44,13 @@ router.get("/obtener-clientes", (req, res) => {
 });
 // Ruta para crear un nuevo cliente
 router.post("/agregar-cliente", (req, res) => {
-  const { nombre, apellido, email, telefono, direccion, ciudad, pais, tipo } =
-    req.body;
+  const { nombre, apellido, email, telefono, direccion, ciudad, pais, tipo } = req.body;
+  // genera un id secreto para el cliente
+  const id_secreto = generarIdSecreto();
 
   const sql = `
     INSERT INTO clientes (
+      id_secreto,
       nombre, 
       apellido, 
       email, 
@@ -51,10 +59,11 @@ router.post("/agregar-cliente", (req, res) => {
       ciudad, 
       pais,
       tipo
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const params = [
+    id_secreto,
     nombre,
     apellido,
     email,
